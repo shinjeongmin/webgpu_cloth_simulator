@@ -8,7 +8,7 @@ import Cloth from "./Cloth";
 // For the simulation to work with collisions,
 // it is wise to use equal spacing between all the particles.
 // This is possible to do in Blender even if the cloth as a whole is a rectangle.
-const OBJECT_URL: string = "cloth_30_45_l.obj";
+const OBJECT_URL: string = "cloth_20_30_l.obj";
 const VERTEX_SPACING = 0.05;
 
 (async () => {
@@ -23,7 +23,8 @@ const VERTEX_SPACING = 0.05;
     const mesh = objLoader.parse(objFile);
 
     const modelTransformation = new Transformation();
-    modelTransformation.scale = [1.0, 1.0, 1.0];
+    modelTransformation.translation = [0,0,0];
+    modelTransformation.scale = [1, 1, 1];
     modelTransformation.rotationXYZ = [0, 1, 0];
 
     // Create Buffers and Bind Groups
@@ -35,14 +36,14 @@ const VERTEX_SPACING = 0.05;
 
     // Initalize Scene objects
     const lightModel = new Transformation();
-    lightModel.translation = [5.0, 0.0, 0.0];
+    lightModel.translation = [5.0, 0.0, 100.0];
     lightModel.rotationXYZ = [0, 0, 0];
 
     const perspectiveCamera = new Camera(
       (2 * Math.PI) / 5,
       gpuCanvas.aspectRatio,
-      0.1,
-      100
+      0.01,
+      10000
     );
 
     perspectiveCamera.translation = [0, 0.0, 2.1];
