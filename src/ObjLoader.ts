@@ -83,26 +83,34 @@ export default class ObjLoader {
       const cache: Record<string, number> = {};
       let i = 0;
       for (const faces of cachedFaces) {
-        for (const faceString of faces) {
-          // If we already saw this, add to indices list.
-          if (cache[faceString] !== undefined) {
-            finalIndices.push(cache[faceString]);
-            continue;
+        // calculate triangle count in faces
+        const triangleCount = faces.length - 2;
+        for(var j = 0; j < triangleCount; j++) {
+          const triangleFace : string[] = [faces[0]];
+          triangleFace.push(faces[1 + j]);
+          triangleFace.push(faces[2 + j]);
+
+          for (const faceString of triangleFace) {
+            // If we already saw this, add to indices list.
+            if (cache[faceString] !== undefined) {
+              finalIndices.push(cache[faceString]);
+              continue;
+            }
+  
+            cache[faceString] = i;
+            finalIndices.push(i);
+  
+            // Need to convert strings to integers, and subtract by 1 to get to zero index.
+            const [vI, uvI, nI] = faceString
+              .split("/")
+              .map((s: string) => Number(s) - 1);
+  
+            vI > -1 && finalPosition.push(...cachedVertices[vI]);
+            uvI > -1 && finalUvs.push(...cachedUvs[uvI]);
+            nI > -1 && finalNormals.push(...cachedNormals[nI]);
+  
+            i += 1;
           }
-
-          cache[faceString] = i;
-          finalIndices.push(i);
-
-          // Need to convert strings to integers, and subtract by 1 to get to zero index.
-          const [vI, uvI, nI] = faceString
-            .split("/")
-            .map((s: string) => Number(s) - 1);
-
-          vI > -1 && finalPosition.push(...cachedVertices[vI]);
-          uvI > -1 && finalUvs.push(...cachedUvs[uvI]);
-          nI > -1 && finalNormals.push(...cachedNormals[nI]);
-
-          i += 1;
         }
       }
     }
